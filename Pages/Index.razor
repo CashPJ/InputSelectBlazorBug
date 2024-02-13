@@ -1,0 +1,56 @@
+﻿@page "/"
+
+<p>
+    Source list: @($"List{ListSource}")<br />
+    Selected user Id = @SelectedUserId
+</p>
+<p> 
+    <InputSelect @bind-Value="SelectedUserId">
+        <option>Choose</option>
+        @foreach(var user in DropdownList)
+        {
+            <option value="@user.Id" selected="@(user.Id == SelectedUserId)">@user.Name</option>
+        }
+        @*If not exist in list, show it in list as disabled item*@
+        @if (SelectedUserId != null && DropdownList.FirstOrDefault(x => x.Id == SelectedUserId) == null)
+        {
+            <option value="@SelectedUserId" selected disabled>[User with Id @SelectedUserId not in list]</option>
+        }
+    </InputSelect>
+</p>
+<p>
+    <input type="button" value="List 1" @onclick="()=>SwitchListSource(1)"/>
+    <input type="button" value="List 2" @onclick="()=>SwitchListSource(2)" />
+</p>
+
+
+@code {
+    public class User
+    {
+        public int? Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+    }
+
+    int ListSource = 1;
+    int? SelectedUserId { get; set; }
+
+    List<User> DropdownList
+        => ListSource == 1 ? List1 : List2;
+
+    List<User> List1 = new List<User>
+    {
+        new(){Id = 1, Name = "User 1"},
+        new(){Id = 2, Name = "User 2"},
+        new(){Id = 3, Name = "User 3"},
+    };
+
+    List<User> List2 = new List<User>
+    {
+        new(){Id = 1, Name = "User 1"},
+        new(){Id = 4, Name = "User 4"},
+        new(){Id = 3, Name = "User 3"},
+    };
+
+    void SwitchListSource(int source)
+        => ListSource = source;
+}
